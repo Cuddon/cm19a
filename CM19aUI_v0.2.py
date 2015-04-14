@@ -9,13 +9,16 @@ Functionality
 
 Requires my CM19a driver version 0.11 or above
 
-Version 0.1
-Dec 2009
+Version 0.2
+Sept 2011
 
 Uses Tkinter libraries provided with Python so should run on any Python installation.
 
 Requires tkinter 8.4 or later
+(sudo apt-get install python-tk)
+
 """
+import time
 
 from Tkinter import *
 import tkMessageBox
@@ -46,9 +49,9 @@ class App:
         self.onButton.pack(side=LEFT)
         self.offButton = Button(group1, text="Off", command=lambda: self.x10command("OFF"))
         self.offButton.pack(side=LEFT)
-        self.brightButton = Button(group1, text="Brighter", command=lambda: self.x10command("BRIGHT"))
+        self.brightButton = Button(group1, text="Brighter", command=lambda: self.x10command("BRIGHT"), state=DISABLED)
         self.brightButton.pack(side=LEFT)
-        self.dimButton = Button(group1, text="Dimmer", command=lambda: self.x10command("DIM"))
+        self.dimButton = Button(group1, text="Dimmer", command=lambda: self.x10command("DIM"), state=DISABLED)
         self.dimButton.pack(side=LEFT)
 
         # Add another frame widget
@@ -64,7 +67,7 @@ class App:
         group3.pack()
 
         # Listen Button (Waits from an inbound command from the X10
-        self.listenButton = Button(group3, text="Listen...", fg="green", command=self.cm19aListen, state=DISABLED)
+        self.listenButton = Button(group3, text="Listen...", fg="black", command=self.cm19aListen)
         self.listenButton.pack(side=LEFT)
 
         # Quit button
@@ -80,7 +83,6 @@ class App:
         "\nProduct ID: %d" % cm19aDriver.cm19a.device.idProduct +
         "\nProduct: %s" % cm19aDriver.cm19a.device.open().getString(cm19aDriver.cm19a.device.iProduct,50) +
         "\nManufacturer: %s" % cm19aDriver.cm19a.device.open().getString(cm19aDriver.cm19a.device.iManufacturer,50) +
-        "\nDevice version: %r" % cm19aDriver.cm19a.device.deviceVersion +
         "\nUSB version: %r" % cm19aDriver.cm19a.device.usbVersion)
 
         self.deviceInfoTextLabel = Label(group4,  textvariable=self.deviceInfoText, anchor=W, justify=LEFT,  relief=FLAT,  bg="gray")
@@ -99,16 +101,16 @@ class App:
             self.statusText.set("Command %s on %s%s sent OK!" % (cmd, self.housecode.get(), self.devicecode.get()))
 
     def cm19aListen(self):
-        print "Now listening (for 30 seconds) for x10 remote commands received via the Cm19a..."
-        time.sleep(30)
-        tkMessageBox.showinfo("Cm19a UI","Commands Received: " + cm19aDriver.cm19a.getReceiveQueue())
+        print "Now listening (for 15 seconds) for x10 remote commands received via the Cm19a..."
+        time.sleep(15)
+        tkMessageBox.showinfo("Cm19a UI","Commands Received: %r" % cm19aDriver.cm19a.getReceiveQueue())
         print "Receive Queue:",  cm19aDriver.cm19a.getReceiveQueue()
 
 # endclass
 
 
 # MAIN
-VERSION = "0.1"
+VERSION = "0.2"
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 400
 
@@ -123,7 +125,7 @@ except:
         tkMessageBox.showerror("Cm19a Driver","The app requires version 0.11 of the driver or above. Please download a leter version from www cuddon.net")
 
 # Open the device and  configure
-cm19aDriver.configure()
+cm19aDriver.configure(start=True)
 if cm19aDriver.cm19a.errors > 0:
     tkMessageBox.showerror("Cm19a Driver","Error initialising the Cm19a device:\n" + cm19aDriver.cm19a.errormessages)
 else:
@@ -149,3 +151,4 @@ else:
 
 root.destroy()
 print "Done."
+
