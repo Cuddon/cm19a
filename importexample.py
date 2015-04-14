@@ -28,11 +28,11 @@ import sys, time, re
 import cm19aDriver
 
 # Start logging
-log = cm19aDriver.startLogging()        # log is an instance of the logger class
+log = cm19adriver.startLogging()        # log is an instance of the logger class
 
 # Configure the CM19a and start polling for inbound commands from a remote
 # Initialise device. Note: auto polling/receiving in a thread is turned ON
-cm19a = cm19aDriver.CM19aDevice(POLLFREQ, log, polling = True)            # cm19a is an instance of the CM19aDevice class
+cm19a = cm19adriver.CM19aDevice(POLLFREQ, log, polling = True)            # cm19a is an instance of the CM19aDevice class
 
 if cm19a.initialised:
     # Firstly some simple send commands
